@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.obd.dao.AwardDao">
+
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="getAllAwardList" parameterType="map" resultType="Award">
+		SELECT id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			create_time as createTime,
+			update_time as updateTime
+		FROM award
+		WHERE 1=1
+		<if test="awardNumber != ''">
+			
+			and award_number like CONCAT('%',#{awardNumber},'%')
+			
+		</if>
+		
+		<if test="awardType != -1 ">
+			
+			and award_type = #{awardType}
+			
+		</if>
+		
+	</select>
+	
+	<select id="getAwardList" parameterType="map" resultType="Award">
+		SELECT id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			create_time as createTime,
+			update_time as updateTime
+		FROM award
+		WHERE 1=1
+		
+		<if test="awardNumber != ''">
+			
+			and award_number like CONCAT('%',#{awardNumber},'%')
+			
+		</if>
+		
+		<if test="awardType != -1 ">
+			
+			and award_type = #{awardType}
+			
+		</if>
+		
+		limit #{startNumber},#{pageSize}
+	</select>
+	
+	<select id="getAwardById" parameterType="int" resultType="Award">
+		SELECT id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			create_time as createTime,
+			update_time as updateTime
+		FROM award
+		WHERE 1=1 and id = #{awardId}
+	</select>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<update id="updateAward" parameterType="award">
+		UPDATE award SET award_image = #{awardImage},
+		award_info = #{awardInfo}, award_number = #{awardNumber}, award_type = #{awardType}, award_address = #{awardAddress},
+		award_phone = #{awardPhone}, award_start = #{awardStart}, award_end = #{awardEnd}, award_secret = #{awardSecret},
+		 award_provide = #{awardProvide}, award_map = #{awardMap}, award_rate = #{awardRate}, update_time = now()
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<insert id="insert" parameterType="Award" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO award(award_image,award_info,award_number,award_type,award_address,award_phone,award_start,award_end,award_secret,award_provide,award_map,award_rate,create_time,update_time)
+		VALUES(#{awardImage},#{awardInfo},#{awardNumber},#{awardType},#{awardAddress},#{awardPhone},#{awardStart},#{awardEnd},#{awardSecret},#{awardProvide},#{awardMap},#{awardRate},now(),now())
+	</insert>
+	
+	<!-- 根据id删除系统管理员信息 -->
+	<delete id="delete" parameterType="int" >
+	   DELETE FROM award WHERE id = #{awardId}
+	</delete>
+
+	<select id="getAwardOrderList" parameterType="int" resultType="Award">
+		SELECT b.id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			b.create_time as createTime,
+			b.update_time as updateTime
+		FROM award a,user_award b
+		WHERE a.id = b.award_id and b.user_id = #{userId} and b.order_status=1
+	</select>
+	
+	<select id="getAllAwardOrderList" parameterType="int" resultType="Award">
+		SELECT b.id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			b.create_time as createTime,
+			b.update_time as updateTime
+		FROM award a,user_award b
+		WHERE a.id=b.award_id and b.user_id = #{userId}
+	</select>
+
+</mapper>  

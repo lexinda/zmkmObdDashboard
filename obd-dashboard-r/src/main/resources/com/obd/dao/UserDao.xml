@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.obd.dao.UserDao">
+
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="getAllUserList" parameterType="map" resultType="User">
+		SELECT id,
+			user_account as userAccount,
+			user_password as userPassword,
+			user_name as userName,
+			user_gender as userGender,
+			user_phone as userPhone,
+			user_email as userEmail,
+			create_time as createTime,
+			update_time as updateTime
+		FROM user
+		WHERE 1=1
+		<if test="userAccount != ''">
+			
+			and user_account like CONCAT('%',#{userAccount},'%')
+			
+		</if>
+		
+		<if test="userPhone != '' ">
+			
+			and user_phone like CONCAT('%',#{userPhone},'%')
+			
+		</if>
+		
+	</select>
+	
+	<select id="getUserList" parameterType="map" resultType="User">
+		SELECT id,
+			user_account as userAccount,
+			user_password as userPassword,
+			user_name as userName,
+			user_gender as userGender,
+			user_phone as userPhone,
+			user_email as userEmail,
+			create_time as createTime,
+			update_time as updateTime
+		FROM user
+		WHERE 1=1
+		
+		<if test="userAccount != ''">
+			
+			and user_account like CONCAT('%',#{userAccount},'%')
+			
+		</if>
+		
+		<if test="userPhone != '' ">
+			
+			and user_phone like CONCAT('%',#{userPhone},'%')
+			
+		</if>
+		
+		limit #{startNumber},#{pageSize}
+	</select>
+	
+	<select id="getUserById" parameterType="int" resultType="User">
+		SELECT id,
+			user_account as userAccount,
+			user_password as userPassword,
+			user_name as userName,
+			user_gender as userGender,
+			user_phone as userPhone,
+			user_email as userEmail,
+			create_time as createTime,
+			update_time as updateTime
+		FROM user
+		WHERE 1=1 and id = #{userId}
+	</select>
+	
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="login" parameterType="map" resultType="User">
+		SELECT id,
+			user_account as userAccount,
+			user_password as userPassword,
+			user_name as userName,
+			user_gender as userGender,
+			user_phone as userPhone,
+			user_email as userEmail,
+			create_time as createTime,
+			update_time as updateTime
+		FROM user
+		WHERE 1=1
+		<if test="userAccount != ''">
+			
+			and user_account = #{userAccount}
+			
+		</if>
+		
+		<if test="userPassword != '' ">
+			
+			and user_password = #{userPassword}
+			
+		</if>
+		
+	</select>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<update id="userModify" parameterType="User">
+		UPDATE user SET user_name = #{userName}, user_gender = #{userGender}, user_phone = #{userPhone},
+		user_email = #{userEmail}, update_time = now()
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<update id="userModifyPassword" parameterType="map">
+		UPDATE user SET user_password = #{newUserPassword},update_time = now()
+		WHERE user_account = #{userAccount}
+	</update>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO user(user_account,user_password,user_name,user_gender,user_phone,user_email,create_time,update_time)
+		VALUES(#{userAccount},#{userPassword},#{userName},#{userGender},#{userPhone},#{userEmail},now(),now())
+	</insert>
+	
+	<!-- 根据id删除系统管理员信息 -->
+	<delete id="delete" parameterType="int" >
+	   DELETE FROM user WHERE id = #{userId}
+	</delete>
+
+	<update id="deleteAward" parameterType="map" >
+	   update user_award set order_status=0 WHERE user_id = #{userId} and id=#{awardId}
+	</update>
+	
+	<select id="queryAwardByUserId" parameterType="int" resultType="Award">
+	select b.id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			b.create_time as createTime,
+			b.update_time as updateTime from award a,user_award b where a.id =b.award_id and b.order_status=1 and b.user_id = #{userId}
+	</select>
+	
+	<select id="queryAwardByUserIdP" parameterType="map" resultType="Award">
+	select b.id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			b.create_time as createTime,
+			b.update_time as updateTime from award a,user_award b where a.id =b.award_id and b.order_status=1 and b.user_id = #{userId} limit #{startNumber},#{pageSize}
+	</select>
+	
+	<insert id="addAwardShare" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into user_share(user_id,award_id,target_phone,create_time)
+		values(#{userId},#{awardId},#{targetShare},now());
+	</insert>
+
+	<insert id="addUserMotionNumber" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into user_motion(user_id,motion_number,update_time)
+		values(#{userId},#{motionNumber},now());
+	</insert>
+
+	<update id="updateUserMotionNumber" parameterType="Map">
+		UPDATE user_motion SET motion_number = #{motionNumber},update_time = now()
+		WHERE user_id = #{userId}
+	</update>
+
+	<select id="queryMotionNumberByUserId" parameterType="int" resultType="int">
+		select motion_number as motionNumber from user_motion where user_id = #{userId}
+	</select>
+	
+	<select id="queryByUserAwardFree" parameterType="int" resultType="int">
+		select count(*) from user_award where user_id= #{userId} and DATE_FORMAT(create_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
+	</select>
+
+</mapper>  
