@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.obd.dao.AdminDao">
+
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="get" parameterType="int" resultType="Admin">
+		SELECT id,
+			account,
+			password,
+			name,
+			status,
+			create_time as createTime,
+			update_time as updateTime
+		FROM admin
+		WHERE id = #{id}
+	</select>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<update id="update" parameterType="Admin">
+		UPDATE admin SET name = #{name},
+		account = #{account}, password = #{password}, status = #{status}, update_time = now() 
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<insert id="insert" parameterType="Admin" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO admin(name, account, password, status, create_time, update_time)
+		VALUES(#{name}, #{account}, #{password}, #{status}, now(), now())
+	</insert>
+	
+	<!-- 根据id删除系统管理员信息 -->
+	<delete id="delete" parameterType="int" >
+	   DELETE FROM admin WHERE id = #{id}
+	</delete>
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="login" parameterType="Admin" resultType="Admin">
+		SELECT id,
+			account,
+			password,
+			name,
+			status,
+			create_time as createTime,
+			update_time as updateTime
+		FROM admin
+		WHERE id=#{id} AND password=#{password}
+	</select>
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<update id="updatePwd" parameterType="Admin">
+		UPDATE admin SET 
+		password = #{password},
+	    update_time = now() 
+		WHERE id = #{id}
+	</update>
+
+</mapper>  

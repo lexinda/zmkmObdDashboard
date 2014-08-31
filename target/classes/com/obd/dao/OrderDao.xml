@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.obd.dao.OrderDao">
+
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="getAllOrderList" parameterType="map" resultType="Order">
+		SELECT id,
+			order_tn as orderTn,
+			trans_type as transType,
+			mer_id as merId,
+			order_number as orderNumber,
+			order_description as orderDescription,
+			order_amount as orderAmount,
+			is_success as isSuccess,
+			update_time as updateTime,
+			user_id as userId
+		FROM `order`
+		WHERE 1=1
+		<if test="orderTn != ''">
+			
+			and order_tn like CONCAT('%',#{orderTn},'%')
+			
+		</if>
+		
+		<if test="isSuccess != -1 ">
+			
+			and is_success = #{isSuccess}
+			
+		</if>
+		
+	</select>
+	
+	<select id="getOrderList" parameterType="map" resultType="Order">
+		SELECT id,
+			order_tn as orderTn,
+			trans_type as transType,
+			mer_id as merId,
+			order_number as orderNumber,
+			order_description as orderDescription,
+			order_amount as orderAmount,
+			is_success as isSuccess,
+			update_time as updateTime,
+			user_id as userId
+		FROM `order`
+		WHERE 1=1
+		
+		<if test="orderTn != ''">
+			
+			and order_tn like CONCAT('%',#{orderTn},'%')
+			
+		</if>
+		
+		<if test="isSuccess != -1 ">
+			
+			and is_success = #{isSuccess}
+			
+		</if>
+		
+		limit #{startNumber},#{pageSize}
+	</select>
+	
+	<select id="getAwardById" parameterType="int" resultType="Order">
+		SELECT id,
+			award_image as awardImage,
+			award_info as awardInfo,
+			award_number as awardNumber,
+			award_type as awardType,
+			award_address as awardAddress,
+			award_phone as awardPhone,
+			award_start as awardStart,
+			award_end as awardEnd,
+			award_secret as awardSecret,
+			award_provide as awardProvide,
+			award_map as awardMap,
+			award_rate as awardRate,
+			create_time as createTime,
+			update_time as updateTime
+		FROM award
+		WHERE 1=1 and id = #{awardId}
+	</select>
+	
+	<select id="getOrderByUserId" parameterType="map" resultType="Order">
+		SELECT id,
+			order_tn as orderTn,
+			trans_type as transType,
+			mer_id as merId,
+			order_number as orderNumber,
+			order_description as orderDescription,
+			order_amount as orderAmount,
+			is_success as isSuccess,
+			update_time as updateTime,
+			user_id as userId
+		FROM `order`
+		WHERE 1=1 and user_id = #{userId} and is_success=1
+	</select>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<update id="updateOrder" parameterType="map">
+		UPDATE `order` SET is_success = 1, update_time = now()
+		WHERE order_tn = #{orderTn}
+	</update>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<insert id="insert" parameterType="Order" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `order`(order_tn,trans_type,mer_id,order_number,order_description,order_amount,is_success,update_time,user_id)
+		VALUES(#{orderTn},#{transType},#{merId},#{orderNumber},#{orderDescription},#{orderAmount},#{isSuccess},now(),#{userId})
+	</insert>
+	
+	<insert id="addAward" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into user_award(user_id,award_id,order_status,is_free,create_time)
+		values(#{userId},#{awardId},1,#{isFree},now());
+	</insert>
+
+</mapper>  

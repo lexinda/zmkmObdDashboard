@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	                   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+                       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.obd.service" />
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.obd.model" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.obd.dao" />
+		<property name="annotationClass" value="org.springframework.stereotype.Component"></property>
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://bswlkj.gotoftp5.com/bswlkj?characterEncoding=UTF-8"></property>
+        <property name="username" value="bswlkj"></property>
+        <property name="password" value="bswlkj1003"></property>
+        <!--<property name="url" value="jdbc:mysql://localhost:3306/zmkm?characterEncoding=UTF-8"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>-->
+        <property name="maxActive" value="100"></property>
+        <property name="maxIdle" value="30"></property>
+        <property name="maxWait" value="500"></property>
+        <property name="defaultAutoCommit" value="true"></property>
+    </bean>
+
+</beans>
